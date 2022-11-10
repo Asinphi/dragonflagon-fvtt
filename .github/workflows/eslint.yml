@@ -8,5 +8,5 @@ jobs:
     - name: Install modules
       run: npm i
     - name: Run ESLint
-      run: npx eslint --ext .ts,.tsx '**/src/**/*.ts'
+      run: npx eslint --ext .ts,.tsx 'df-chat-enhance/src/df-chat-enhance/*.ts'
 #eslint . --ext .js,.jsx,.ts,.tsx
