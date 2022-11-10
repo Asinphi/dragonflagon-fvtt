@@ -125,12 +125,9 @@ export default class ChatMerge {
 		Hooks.on('renderChatLog', (_: any, html: JQuery<HTMLElement>) => this._processAllMessage(html));
 		Hooks.on('renderDFChatArchiveViewer', (_: any, html: JQuery<HTMLElement>) => this._processAllMessage(html));
 	}
-
-	private static _deleteMessage(wrapper: (arg0: any, arg1: any) => any, messageId: string, { deleteAll = false } = {}) {
-		// Ignore the Delete All process. Everything is being obliterated, who cares about the styling
-		if (!deleteAll && this._enabled) {
-			const element = document.querySelector(`li[data-message-id="${messageId}"`);
-			// If we were a TOP
+	
+	private static _deleteMessageElement(HTMLElement element) {
+		// If we were a TOP
 			if (element?.classList?.contains('dfce-cm-top')) {
 				element.classList.remove('dfce-cm-top');
 				// If the next element was a middle, make it a top
@@ -155,6 +152,14 @@ export default class ChatMerge {
 			// If we were a MIDDLE, let the above and below snug and they'll be fine
 			else if (element?.classList?.contains('dfce-cm-middle'))
 				element.classList.remove('dfce-cm-middle');
+	}
+
+	private static _deleteMessage(wrapper: (arg0: any, arg1: any) => any, messageId: string, { deleteAll = false } = {}) {
+		// Ignore the Delete All process. Everything is being obliterated, who cares about the styling
+		if (!deleteAll && this._enabled) {
+			for (const el of document.querySelectorAll(`li[data-message-id="${messageId}"`))
+				deleteMessageElement(el);
+			deleteMessageElement(ui.sidebar.popouts.chat?.element.find(`li[data-message-id="${messageId}"`)[0]);
 		}
 		return wrapper(messageId, { deleteAll });
 	}
@@ -189,7 +194,7 @@ export default class ChatMerge {
 	private static _renderChatMessage(message: ChatMessageData, html: JQuery<HTMLElement>, _cmd: ChatMessageData) {
 		if (!ChatMerge._enabled) return;
 		// Find the most recent message in the chat log
-		const partnerElem = $(`li.chat-message`).last()[0];
+		const partnerElem = html.find(`li.chat-message`).last()[0];
 		// If there is no message, return
 		if (partnerElem === null || partnerElem === undefined) return;
 		// get the ChatMessage document associated with the html
