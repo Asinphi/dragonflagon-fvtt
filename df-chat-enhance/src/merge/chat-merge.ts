@@ -126,40 +126,40 @@ export default class ChatMerge {
 		Hooks.on('renderDFChatArchiveViewer', (_: any, html: JQuery<HTMLElement>) => this._processAllMessage(html));
 	}
 	
-	private static _deleteMessageElement(HTMLElement element) {
+	private static _deleteMessageElement(element: HTMLElement) {
 		// If we were a TOP
-			if (element?.classList?.contains('dfce-cm-top')) {
-				element.classList.remove('dfce-cm-top');
-				// If the next element was a middle, make it a top
-				if (element.nextElementSibling.classList.contains('dfce-cm-middle')) {
-					element.nextElementSibling.classList.remove('dfce-cm-middle');
-					element.nextElementSibling.classList.add('dfce-cm-top');
-				}
-				// Otherwise, it was a bottom and should now become a normal message again
-				else element.nextElementSibling.classList.remove('dfce-cm-bottom');
+		if (element?.classList?.contains('dfce-cm-top')) {
+			element.classList.remove('dfce-cm-top');
+			// If the next element was a middle, make it a top
+			if (element.nextElementSibling.classList.contains('dfce-cm-middle')) {
+				element.nextElementSibling.classList.remove('dfce-cm-middle');
+				element.nextElementSibling.classList.add('dfce-cm-top');
 			}
-			// If we were a BOTTOM
-			else if (element?.classList?.contains('dfce-cm-bottom')) {
-				element.classList.remove('dfce-cm-bottom');
-				// If the previous element was a middle, make it a bottom
-				if (element.previousElementSibling.classList.contains('dfce-cm-middle')) {
-					element.previousElementSibling.classList.remove('dfce-cm-middle');
-					element.previousElementSibling.classList.add('dfce-cm-bottom');
-				}
-				// Otherwise, it was a top and should now become a normal message again
-				else element.previousElementSibling.classList.remove('dfce-cm-top');
+			// Otherwise, it was a bottom and should now become a normal message again
+			else element.nextElementSibling.classList.remove('dfce-cm-bottom');
+		}
+		// If we were a BOTTOM
+		else if (element?.classList?.contains('dfce-cm-bottom')) {
+			element.classList.remove('dfce-cm-bottom');
+			// If the previous element was a middle, make it a bottom
+			if (element.previousElementSibling.classList.contains('dfce-cm-middle')) {
+				element.previousElementSibling.classList.remove('dfce-cm-middle');
+				element.previousElementSibling.classList.add('dfce-cm-bottom');
 			}
-			// If we were a MIDDLE, let the above and below snug and they'll be fine
-			else if (element?.classList?.contains('dfce-cm-middle'))
-				element.classList.remove('dfce-cm-middle');
+			// Otherwise, it was a top and should now become a normal message again
+			else element.previousElementSibling.classList.remove('dfce-cm-top');
+		}
+		// If we were a MIDDLE, let the above and below snug and they'll be fine
+		else if (element?.classList?.contains('dfce-cm-middle'))
+			element.classList.remove('dfce-cm-middle');
 	}
 
 	private static _deleteMessage(wrapper: (arg0: any, arg1: any) => any, messageId: string, { deleteAll = false } = {}) {
 		// Ignore the Delete All process. Everything is being obliterated, who cares about the styling
 		if (!deleteAll && this._enabled) {
 			for (const el of document.querySelectorAll(`li[data-message-id="${messageId}"`))
-				deleteMessageElement(el);
-			deleteMessageElement(ui.sidebar.popouts.chat?.element.find(`li[data-message-id="${messageId}"`)[0]);
+				_deleteMessageElement(el);
+			_deleteMessageElement(ui.sidebar.popouts.chat?.element.find(`li[data-message-id="${messageId}"`)[0]);
 		}
 		return wrapper(messageId, { deleteAll });
 	}
